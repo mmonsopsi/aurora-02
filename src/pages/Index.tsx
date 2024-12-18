@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { ChatInterface } from "@/components/chat/ChatInterface";
 import { ChatSidebar } from "@/components/chat/ChatSidebar";
 import { Button } from "@/components/ui/button";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
-
-const MOCK_CHATS: any[] = [];
+import { useToast } from "@/components/ui/use-toast";
 
 const INITIAL_MESSAGES = [
   {
@@ -20,8 +20,18 @@ const Index = () => {
   const [messages, setMessages] = useState(INITIAL_MESSAGES);
   const [selectedChat, setSelectedChat] = useState<string>("1");
   const { theme, setTheme } = useTheme();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSendMessage = (content: string) => {
+  useEffect(() => {
+    const apiKey = localStorage.getItem("openai_api_key");
+    if (!apiKey) {
+      navigate("/setup");
+    }
+  }, [navigate]);
+
+  const handleSendMessage = async (content: string) => {
     if (!content.trim()) return;
     
     const newMessage = {
@@ -32,17 +42,55 @@ const Index = () => {
     };
 
     setMessages((prev) => [...prev, newMessage]);
+    setIsLoading(true);
 
-    // Simulate AI response
-    setTimeout(() => {
-      const response = {
+    try {
+      const apiKey = localStorage.getItem("openai_api_key");
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: "gpt-4",
+          messages: [
+            {
+              role: "system",
+              content: "You are a helpful assistant.",
+            },
+            ...messages.map((msg) => ({
+              role: msg.isUser ? "user" : "assistant",
+              content: msg.content,
+            })),
+            { role: "user", content },
+          ],
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to get response");
+      }
+
+      const data = await response.json();
+      const aiResponse = {
         id: String(messages.length + 2),
-        content: "Estou aqui para ajudar! Como posso ser útil?",
+        content: data.choices[0].message.content,
         isUser: false,
         timestamp: new Date(),
       };
-      setMessages((prev) => [...prev, response]);
-    }, 1000);
+
+      setMessages((prev) => [...prev, aiResponse]);
+    } catch (error) {
+      console.error("Error:", error);
+      toast({
+        title: "Error",
+        description: "Failed to get response from OpenAI. Please check your API key.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleNewChat = () => {
@@ -53,7 +101,7 @@ const Index = () => {
   return (
     <div className="flex h-screen w-full overflow-hidden bg-background">
       <ChatSidebar
-        chats={MOCK_CHATS}
+        chats={[]}
         selectedChat={selectedChat}
         onSelectChat={setSelectedChat}
         onNewChat={handleNewChat}
@@ -75,7 +123,11 @@ const Index = () => {
             </Button>
           </div>
           <div className="flex-1 overflow-hidden">
-            <ChatInterface messages={messages} onSendMessage={handleSendMessage} />
+            <ChatInterface 
+              messages={messages} 
+              onSendMessage={handleSendMessage}
+              isLoading={isLoading} 
+            />
           </div>
         </div>
       </div>
