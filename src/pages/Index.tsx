@@ -56,22 +56,24 @@ const Index = () => {
         onSelectChat={setSelectedChat}
         onNewChat={handleNewChat}
       />
-      <div className="relative flex-1 flex flex-col">
-        <div className="absolute right-4 top-4 z-10">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-          >
-            {theme === "dark" ? (
-              <Sun className="h-5 w-5" />
-            ) : (
-              <Moon className="h-5 w-5" />
-            )}
-          </Button>
-        </div>
-        <div className="flex-1 overflow-hidden">
-          <ChatInterface messages={messages} onSendMessage={handleSendMessage} />
+      <div className="relative flex-1 flex justify-center">
+        <div className="max-w-[750px] w-full">
+          <div className="absolute right-4 top-4 z-10">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            >
+              {theme === "dark" ? (
+                <Sun className="h-5 w-5" />
+              ) : (
+                <Moon className="h-5 w-5" />
+              )}
+            </Button>
+          </div>
+          <div className="flex-1 overflow-hidden">
+            <ChatInterface messages={messages} onSendMessage={handleSendMessage} />
+          </div>
         </div>
       </div>
     </div>
