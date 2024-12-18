@@ -2,23 +2,10 @@ import { useState } from "react";
 import { ChatInterface } from "@/components/chat/ChatInterface";
 import { ChatSidebar } from "@/components/chat/ChatSidebar";
 import { Button } from "@/components/ui/button";
-import { Moon, Sun, Image, PenLine, Lightbulb, ClipboardList, Gift } from "lucide-react";
+import { Moon, Sun } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 
-const MOCK_CHATS = [
-  {
-    id: "1",
-    title: "ChatGPT",
-    preview: "Bem-vindo ao chat!",
-    timestamp: new Date(),
-  },
-  {
-    id: "2",
-    title: "Explorar GPTs",
-    preview: "Descubra novos GPTs",
-    timestamp: new Date(),
-  },
-];
+const MOCK_CHATS: any[] = [];
 
 const INITIAL_MESSAGES = [
   {
@@ -27,14 +14,6 @@ const INITIAL_MESSAGES = [
     isUser: false,
     timestamp: new Date(),
   },
-];
-
-const QUICK_ACTIONS = [
-  { icon: Image, label: "Criar imagem", color: "text-green-500" },
-  { icon: PenLine, label: "Ajudar a escrever", color: "text-purple-500" },
-  { icon: Lightbulb, label: "Sugerir", color: "text-yellow-500" },
-  { icon: ClipboardList, label: "Fazer um plano", color: "text-yellow-500" },
-  { icon: Gift, label: "Surpreender", color: "text-blue-500" },
 ];
 
 const Index = () => {
@@ -66,7 +45,6 @@ const Index = () => {
 
   const handleNewChat = () => {
     setMessages(INITIAL_MESSAGES);
-    // Implementation for new chat creation
     console.log("New chat created");
   };
 
@@ -94,19 +72,6 @@ const Index = () => {
         </div>
         <div className="flex-1 overflow-hidden">
           <ChatInterface messages={messages} onSendMessage={handleSendMessage} />
-        </div>
-        <div className="p-4 flex flex-wrap gap-2 justify-center">
-          {QUICK_ACTIONS.map((action) => (
-            <Button
-              key={action.label}
-              variant="secondary"
-              className="gap-2"
-              onClick={() => handleSendMessage(`/${action.label.toLowerCase()}`)}
-            >
-              <action.icon className={`h-4 w-4 ${action.color}`} />
-              {action.label}
-            </Button>
-          ))}
         </div>
       </div>
     </div>
