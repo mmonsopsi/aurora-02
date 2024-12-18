@@ -22,6 +22,8 @@ const Index = () => {
   const { theme, setTheme } = useTheme();
 
   const handleSendMessage = (content: string) => {
+    if (!content.trim()) return;
+    
     const newMessage = {
       id: String(messages.length + 1),
       content,
@@ -56,12 +58,13 @@ const Index = () => {
         onSelectChat={setSelectedChat}
         onNewChat={handleNewChat}
       />
-      <div className="relative flex-1 flex justify-center">
-        <div className="max-w-[750px] w-full">
+      <div className="relative flex-1">
+        <div className="mx-auto max-w-[750px] h-full flex flex-col">
           <div className="absolute right-4 top-4 z-10">
             <Button
               variant="ghost"
               size="icon"
+              className="glass-morphism"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             >
               {theme === "dark" ? (
