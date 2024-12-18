@@ -19,7 +19,7 @@ export const ChatMessage = ({ content, isUser, timestamp }: ChatMessageProps) =>
         className={cn(
           "relative max-w-[80%] rounded-2xl px-4 py-3 glass-morphism",
           isUser
-            ? "bg-primary text-primary-foreground"
+            ? "bg-primary/90 text-primary-foreground font-medium"
             : "bg-secondary text-secondary-foreground"
         )}
       >
